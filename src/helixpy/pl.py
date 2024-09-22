@@ -19,7 +19,7 @@ def wenxiang(
     implosion_factor: float = 0.0,
     n_amino_acids_resize: int = None,
     ax: plt.Axes = None,
-) -> tuple[plt.Figure, plt.Axes]:
+):
     """Plot a helix wheel using the Wenxiang format.
 
     Parameters
@@ -44,13 +44,6 @@ def wenxiang(
         This parameter only affects the visualization. The spiral will still contain all amino acids.
         Useful for visualizing multiple sequences with different lengths.
     ax : plt.Axes, optional
-        Matplotlib axes.
-
-    Returns
-    -------
-    fig : plt.Figure
-        Matplotlib figure.
-    ax : plt.Axes
         Matplotlib axes.
 
     References
@@ -142,7 +135,7 @@ def wenxiang(
         points.append((x, y))
 
     if ax is None:
-        fig, ax = plt.subplots(figsize=(6, 6))
+        _, ax = plt.subplots(figsize=(6, 6))
 
     spiral_dist = float(np.linalg.norm(np.array(points[0]) - np.array(points[1])))
     point_max_radius = spiral_dist / 2
@@ -247,8 +240,6 @@ def wenxiang(
 
     ax.set_aspect("equal")
     ax.set_axis_off()
-
-    return fig, ax
 
 
 def _floor_with_decimals(x: float, decimals: int) -> float:
