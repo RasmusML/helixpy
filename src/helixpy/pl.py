@@ -100,7 +100,7 @@ def wenxiang(
     else:
         n_circles_visual = n_circles
 
-    # Add an extra outer circle arc (n_arcs2 + 1), so outer AA are always on the canvas.
+    # Add an extra outer circle arc (+1), so outer AA are always on the canvas.
     circle_gap = 0.5 / (n_circles_visual + 1)
     start_gap = circle_gap * 1.8
 
@@ -128,20 +128,18 @@ def wenxiang(
     df_spiral.iloc[n_arcs - 1, df_spiral.columns.get_loc("end_angle")] = last_angle
 
     points = []
-    cum_rotation = 0
+    for i in range(n_aa):
+        rotation = amino_acid_to_rotation(i + 1)
 
-    for _ in range(n_aa):
-        i = rotation_to_arc_idx(cum_rotation)
-        arc = df_spiral.iloc[i]
+        arc_idx = rotation_to_arc_idx(rotation)
+        arc = df_spiral.iloc[arc_idx]
 
-        angle = 90 + cum_rotation
+        angle = 90 + rotation
         radius = arc["radius"] / 2
         x = arc["center_x"] - radius * np.cos(np.radians(angle))
         y = arc["center_y"] + radius * np.sin(np.radians(angle))
 
         points.append((x, y))
-
-        cum_rotation += rotation_per_amino_acid
 
     if ax is None:
         fig, ax = plt.subplots(figsize=(6, 6))
