@@ -83,8 +83,8 @@ def wenxiang(
     if (n_amino_acids_resize is not None) and (n_amino_acids_resize < 2):
         raise ValueError("The number of amino acids used as reference resize size must be at least 2.")
 
-    angle = amino_acid_to_rotation(n_aa)
-    n_arcs = rotation_to_arc_idx(angle) + 1
+    total_rotation = amino_acid_to_rotation(n_aa)
+    n_arcs = rotation_to_arc_idx(total_rotation) + 1
 
     if (implosion_factor < 0) or (implosion_factor > 1 / n_arcs):
         upper = _floor_with_decimals(1 / n_arcs, decimals=3)
@@ -94,14 +94,14 @@ def wenxiang(
 
     # Resize the spiral to fit a fixed number of AA.
     if n_amino_acids_resize is not None:
-        angle = amino_acid_to_rotation(n_amino_acids_resize)
-        n_arcs_resize = rotation_to_arc_idx(angle) + 1
-        n_circles_visually = math.ceil(n_arcs_resize / 2)
+        total_rotation_visual = amino_acid_to_rotation(n_amino_acids_resize)
+        n_arcs_visual = rotation_to_arc_idx(total_rotation_visual) + 1
+        n_circles_visual = math.ceil(n_arcs_visual / 2)
     else:
-        n_circles_visually = n_circles
+        n_circles_visual = n_circles
 
     # Add an extra outer circle arc (n_arcs2 + 1), so outer AA are always on the canvas.
-    circle_gap = 0.5 / (n_circles_visually + 1)
+    circle_gap = 0.5 / (n_circles_visual + 1)
     start_gap = circle_gap * 1.8
 
     # Adjust the center of the spiral for aligning arcs with implosion.
