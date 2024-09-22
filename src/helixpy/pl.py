@@ -9,7 +9,7 @@ from matplotlib.patches import Arc
 
 
 def wenxiang(
-    sequence,
+    sequence: str,
     *,
     color: Literal["hbpa", "polarity", "charge", "hydropathy"] = "hbpa",
     add_legend: bool = True,
@@ -40,7 +40,7 @@ def wenxiang(
         Implosion factor for the spiral shape. Increase to make the spiral more compact.
         Must be between 0 and 1/n_arcs.
     n_amino_acids_resize : int, optional
-        Resize the spiral to fit a fixed number of amino acids visually.
+        Resize the spiral to fit a fixed number of amino acids visually. If None, no resizing is done.
         This parameter only affects the visualization. The spiral will still contain all amino acids.
         Useful for visualizing multiple sequences with different lengths.
     ax : plt.Axes, optional
@@ -79,6 +79,9 @@ def wenxiang(
 
     if (step_size is not None) and (step_size < 1):
         raise ValueError("Step size must be at least 1.")
+
+    if (n_amino_acids_resize is not None) and (n_amino_acids_resize < 2):
+        raise ValueError("The number of amino acids used as reference resize size must be at least 2.")
 
     angle = amino_acid_to_rotation(n_aa)
     n_arcs = rotation_to_arc_idx(angle) + 1
