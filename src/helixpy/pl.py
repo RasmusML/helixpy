@@ -11,13 +11,14 @@ from matplotlib.patches import Arc
 def wenxiang(
     sequence: str,
     *,
-    color: Literal["hbpa", "polarity", "charge", "hydropathy"] = "hbpa",
+    color: Literal["hbpa", "polarity", "charge", "hydropathicity"] = "hbpa",
     add_legend: bool = True,
     add_amino_acid_label: bool = True,
     step_size: int = 18,
     rotation_per_amino_acid: int = 100,
     implosion_factor: float = 0.0,
     n_amino_acids_resize: int = None,
+    show_all_labels: bool = True,
     ax: plt.Axes = None,
 ):
     """Plot a helix wheel using the Wenxiang format.
@@ -43,6 +44,8 @@ def wenxiang(
         Resize the spiral to fit a fixed number of amino acids visually. If None, no resizing is done.
         This parameter only affects the visualization. The spiral will still contain all amino acids.
         Useful for visualizing multiple sequences with different lengths.
+    show_all_labels : bool, optional
+        Whether to show all labels in the legend, or only the ones present in the sequence.
     ax : plt.Axes, optional
         Matplotlib axes.
 
@@ -137,6 +140,10 @@ def wenxiang(
     if ax is None:
         _, ax = plt.subplots(figsize=(6, 6))
 
+    if n_amino_acids_resize is not None:
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+
     spiral_dist = float(np.linalg.norm(np.array(points[0]) - np.array(points[1])))
     point_max_radius = spiral_dist / 2
     point_radius = point_max_radius * 0.8
@@ -197,13 +204,13 @@ def wenxiang(
     elif color == "charge":
         types = _aa_to_charge()
         types_palette = _charge_palette()
-    elif color == "hydropathy":
+    elif color == "hydropathicity":
         types = _aa_to_hydropathy()
         types_palette = _hydropathy_palette()
     else:
-        raise ValueError("Invalid colors. Must be 'hbpa', 'polarity', 'charge' or 'hydropathy'.")
+        raise ValueError("Invalid colors. Must be 'hbpa', 'polarity', 'charge' or 'hydropathicity'.")
 
-    labels = list({types[aa] for aa in sequence})
+    labels = list(types_palette.keys()) if show_all_labels else list({types[aa] for aa in sequence})
     label_order = list(types_palette.keys())
     labels.sort(key=lambda x: label_order.index(x))
     colors = [types_palette[types[aa]] for aa in sequence]
@@ -233,10 +240,6 @@ def wenxiang(
     if add_legend:
         patches = [mpatches.Patch(color=types_palette[label], label=label) for label in labels if label != "unknown"]
         ax.legend(handles=patches, loc="center left", bbox_to_anchor=(1, 0.5))
-
-    if n_amino_acids_resize is not None:
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
 
     ax.set_aspect("equal")
     ax.set_axis_off()
